@@ -1,16 +1,12 @@
----
-title: 'Reproducible Research: Project 1'
-author: "M. Nelson"
-date: "January 8, 2016"
-output:
-    html_document:
-        keep_md: true
----
+# Reproducible Research: Project 1
+M. Nelson  
+January 8, 2016  
 
 
 ## Loading and preprocessing the data
 
-```{r, message=F, warning=F, quietly=TRUE}
+
+```r
 # Read in the data
 actData <- read.csv("./activity.csv")
 
@@ -30,7 +26,8 @@ options(scipen = 999)
 
 ## What is mean total number of steps taken per day?
 
-```{r}
+
+```r
 # Add column with daily step counts for each row
 actData <- actData %>%
     group_by(date) %>%
@@ -44,19 +41,24 @@ daily <- actData %>%
 
 # Plot the histogram
 hist(daily$dailySteps, xlab = "Steps per Day", main = "Histogram of Daily Steps (original data)")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
+```r
 # Prepare variables with mean/median steps per day.
 dailyMean <- round(mean(daily$dailySteps), 0)
 dailyMedian <- round(median(daily$dailySteps), 0)
 ```
 ###Results:
-The mean number of steps taken each day (excluding NAs) is: `r dailyMean`.  
-The median number of steps taken each day (excluding NAs) is: `r dailyMedian`.  
+The mean number of steps taken each day (excluding NAs) is: 9354.  
+The median number of steps taken each day (excluding NAs) is: 10395.  
 
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 # Add column with interval average counts for each row
 actData <- actData %>%
     group_by(interval) %>%
@@ -70,7 +72,11 @@ intervals <- actData %>%
 
 # Plot the time series of interval number vs. average steps in that interval
 plot(intervals$interval, intervals$intAvg, type = "l", xlab = "Intervals", ylab = "Average Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
 # Find the interval that had the highest average number of steps
 mostActive <- intervals %>%
     filter(intAvg == max(intervals$intAvg)) %>%
@@ -78,12 +84,13 @@ mostActive <- intervals %>%
     as.integer()
 ```
 ###Results:
-The 5-minute interval that on average has the maximum number of steps (excluding NAs) is interval: `r mostActive`.  
+The 5-minute interval that on average has the maximum number of steps (excluding NAs) is interval: 835.  
 
 
 ## Imputing missing values
 
-```{r}
+
+```r
 # Sum the total rows with missing step data
 NAcount <- sum(is.na(actData$steps))
 
@@ -103,22 +110,27 @@ impDaily <- imputedData %>%
 
 # Plot the histogram
 hist(impDaily$dailySteps, xlab = "Steps per Day", main = "Histogram of Daily Steps (imputed data)")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+```r
 # Prepare variables with mean/median steps per day.
 impDailyMean <- round(mean(impDaily$dailySteps), 0)
 impDailyMedian <- round(median(impDaily$dailySteps), 0)
 ```
 ###Results:
-The number rows with NA values for steps is: `r NAcount`.  
-The mean number of steps taken each day is: `r impDailyMean`.  
-The median number of steps taken each day is: `r impDailyMedian`.  
+The number rows with NA values for steps is: 2304.  
+The mean number of steps taken each day is: 10766.  
+The median number of steps taken each day is: 10766.  
 
 Total daily number of steps is greater with the imputed data because it has replaced NA with additional estimated missing step counts.
   
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r, fig.height=8}
+
+```r
 # Add a column with factor for weekend or weekday
 imputedData <- mutate(imputedData, typeOfDay = as.factor(ifelse(isWeekend(date), "weekend", "weekday")))
 
@@ -142,7 +154,8 @@ wEndIntervals <- imputedData %>%
 par(mfcol = c(2,1))
 plot(wDayIntervals$interval, wDayIntervals$intAvg, type = "l", xlab = "Weekday Intervals", ylab = "Average Steps")
 plot(wEndIntervals$interval, wEndIntervals$intAvg, type = "l", xlab = "Weekend Intervals", ylab = "Average Steps")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
 
